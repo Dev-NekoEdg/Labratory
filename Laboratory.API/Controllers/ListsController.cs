@@ -89,5 +89,19 @@ namespace Laboratory.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+
+        [HttpPost("filtered")]
+        public async Task<IActionResult> Index([FromBody] FilterEnvelop<FilterSearch> filter)
+        {
+            try
+            {
+                var result = await this.service.GetFilteredLists(filter);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
     }
 }

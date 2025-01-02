@@ -22,5 +22,7 @@ namespace Labratory.Service.ListItems
         Task<bool> UpdateListsItemImageAsync(int listId, int listItemId, string ext, Stream file);
 
         Task<bool> LoadListsItemAsync(int listId, string extention, Stream file);
+
+        Task<FilterEnvelop<IList<ListsItemsDto>>> GetFilteredListsItemsAsync(int listId, FilterEnvelop<FilterSearch> filter);
     }
 }

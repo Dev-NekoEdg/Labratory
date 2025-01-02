@@ -28,18 +28,29 @@ namespace Labratory.Infrastructure.Repositories
             return true;
         }
 
+        public async Task<(IList<Lists>, int)> GetFilteredLists(FilterEnvelop<FilterSearch> filter)
+        {
+            var result = new FilterEnvelop<IList<Lists>>();
+            var baseQuery = this.context.Lists.AsQueryable();
+
+            if (filter.Data.Field.ToLower() == "nombre")
+            {
+                baseQuery = baseQuery.Where(b => b.Name.ToLower().Contains(filter.Data.Value.ToLower()));
+            }
+            if (filter.Data.Field.ToLower() == "id")
+            {
+                baseQuery = baseQuery.Where(b => b.Id == Convert.ToInt32(filter.Data.Value));
+            }
+
+            int countTotal = baseQuery.Count();
+            baseQuery = baseQuery.Skip((filter.CurrentPage - 1) * filter.PageSize).Take(filter.PageSize);
+
+            return (await baseQuery.ToListAsync(), countTotal);
+        }
+
         public async Task<IList<Lists>> GetAllLists()
         {
-            try
-            {
-
             return await this.context.Lists.ToListAsync();
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
         }
 
         public async Task<Lists> GetList(int id)
@@ -56,7 +67,7 @@ namespace Labratory.Infrastructure.Repositories
 
         public async Task<Lists> UpdateList(Lists list)
         {
-            this.context.Entry<Lists>(list).State = EntityState.Modified; 
+            this.context.Entry<Lists>(list).State = EntityState.Modified;
             await this.context.SaveChangesAsync();
             return list;
         }

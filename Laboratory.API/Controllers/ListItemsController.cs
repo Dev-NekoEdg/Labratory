@@ -79,7 +79,7 @@ namespace Laboratory.API.Controllers
             try
             {
                 string extention = Path.GetExtension(image.FileName).ToLowerInvariant();
-                if (!this.commonConfig.AllowedImageExt.Contains(extention.Replace(".","")))
+                if (!this.commonConfig.AllowedImageExt.Contains(extention.Replace(".", "")))
                 {
                     return BadRequest("File not allowed");
                 }
@@ -110,7 +110,7 @@ namespace Laboratory.API.Controllers
                     return BadRequest("File not allowed");
                 }
 
-                var result = await this.service.LoadListsItemAsync(listId,  extention, fileCSV.OpenReadStream());
+                var result = await this.service.LoadListsItemAsync(listId, extention, fileCSV.OpenReadStream());
                 // var ruta = await this.blobStorageService.SaveImageIntoBlobStorage(image.FileName, name, image.OpenReadStream());
 
                 return Ok(result);
@@ -126,6 +126,19 @@ namespace Laboratory.API.Controllers
         }
 
 
+        [HttpPost("{listId}/filter")]
+        public async Task<IActionResult> Index(int listId,[FromBody] FilterEnvelop<FilterSearch> filter)
+        {
+            try
+            {
+                var list = await service.GetFilteredListsItemsAsync(listId, filter);
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
 
 

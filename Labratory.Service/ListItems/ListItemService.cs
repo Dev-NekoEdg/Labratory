@@ -53,6 +53,23 @@ namespace Labratory.Service.ListItems
             return this.mapper.Map<ListsItemsDto>(item);
         }
 
+        public async Task<FilterEnvelop<IList<ListsItemsDto>>> GetFilteredListsItemsAsync(int listId, FilterEnvelop<FilterSearch> filter)
+        {
+            var result = new FilterEnvelop<IList<ListsItemsDto>>();
+            (IList<ListsItemsJoinSet>, int) items = await this.repository.GetFilteredAsync(listId, filter);
+            
+            var data = this.mapper.Map<IList<ListsItemsDto>>(items.Item1);
+
+            result.CurrentPage = filter.CurrentPage;
+            result.PageSize = filter.PageSize;
+            result.TotalRecords = items.Item2;
+            decimal pages = (decimal)result.TotalRecords / (decimal)result.PageSize;
+            result.Pages = (int)Math.Ceiling(pages);
+            
+            result.Data = data;
+            return result;
+        }
+
         public async Task<ListsItemsDto> UpdateListsItemsAsync(ListsItemsDto newListItem)
         {
             var itemMapped = this.mapper.Map<ListsItems>(newListItem);
@@ -76,14 +93,12 @@ namespace Labratory.Service.ListItems
             item.ImageUrl = result;
 
             await this.UpdateListsItemsAsync(item);
-
-
             return true;
         }
 
         public async Task<bool> LoadListsItemAsync(int listId, string ex, Stream file)
         {
-            List<ListsItemsDto> items = new List<ListsItemsDto>();
+            List<ListsItems> items = new List<ListsItems>();
             using (StreamReader sr = new StreamReader(file))
             {
                 sr.ReadLine();
@@ -99,18 +114,20 @@ namespace Labratory.Service.ListItems
                     //lineas.Add(sr.ReadLine());
                 }
             }
-            var x = items;
+
+            await this.repository.AddRangeItems(items);
             return true;
         }
 
-        private async Task<ListsItemsDto> ConvertStringToListsItems(int listId, string[] line)
+        private async Task<ListsItems> ConvertStringToListsItems(int listId, string[] line)
         {
-            return new ListsItemsDto
+            return new ListsItems
             {
                 ListId = listId,
-                Name = line[1],
-                Description = line[2],
-                ImageUrl = line[3]
+                Name = line[0],
+                Description = line[1],
+                ImageUrl = line[2],
+                Complete = !string.IsNullOrWhiteSpace(line[3])
             };
         }
     }

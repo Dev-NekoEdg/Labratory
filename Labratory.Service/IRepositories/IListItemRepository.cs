@@ -1,4 +1,5 @@
-﻿using Labratory.Domain.Entities;
+﻿using Labratory.Domain.Dtos;
+using Labratory.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,8 @@ namespace Labratory.Service.IRepositories
         Task<ListsItems> UpdateAsync(ListsItems listsItem);
 
         Task<bool> DeleteAsync(int listItemId);
+        Task AddRangeItems(List<ListsItems> items);
 
+        Task<(IList<ListsItemsJoinSet>, int)> GetFilteredAsync(int listId, FilterEnvelop<FilterSearch> filter);
     }
 }

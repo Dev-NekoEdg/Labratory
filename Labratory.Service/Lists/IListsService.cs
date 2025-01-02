@@ -19,5 +19,7 @@ namespace Labratory.Service.Lists
 
         Task<bool> DeleteList(int listId);
 
+        Task<FilterEnvelop<IList<ListsDto>>> GetFilteredLists(FilterEnvelop<FilterSearch> filter);
+
     }
 }

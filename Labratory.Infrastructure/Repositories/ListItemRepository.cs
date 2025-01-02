@@ -1,7 +1,9 @@
-﻿using Labratory.Domain.Entities;
+﻿using Labratory.Domain.Dtos;
+using Labratory.Domain.Entities;
 using Labratory.Service.IRepositories;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -53,6 +55,42 @@ namespace Labratory.Infrastructure.Repositories
                 .Where(x => x.ListId == listId).ToListAsync();
         }
 
+        public async Task<(IList<ListsItemsJoinSet>, int)> GetFilteredAsync(int listId, FilterEnvelop<FilterSearch> filter)
+        {
+            var baseQuery = this.context.ListsItems
+                                .Join(this.context.Lists,
+                                      items => items.ListId,
+                                      list => list.Id,
+                                      (items, list) => new ListsItemsJoinSet
+                                      {
+                                          Id = items.Id,
+                                          ListId = items.ListId,
+                                          ListName = list.Name,
+                                          Name = items.Name,
+                                          ImageUrl = items.ImageUrl,
+                                          Description = items.Description,
+                                          Complete = items.Complete,
+                                      })
+                                .Where(x => x.ListId == listId)
+                                .AsQueryable();
+
+            if (filter.Data.Field.ToLower() == "nombre") 
+            {
+                baseQuery = baseQuery.Where(b => b.Name.ToLower().Contains(filter.Data.Value.ToLower()));
+            }
+            if (filter.Data.Field.ToLower() == "id")
+            {
+                baseQuery = baseQuery.Where(b => b.Id == Convert.ToInt32(filter.Data.Value));
+            }
+
+            var countTotal = baseQuery.Count();
+
+            baseQuery = baseQuery.Skip((filter.CurrentPage - 1) * filter.PageSize).Take(filter.PageSize);
+
+            return (await baseQuery.ToListAsync(), countTotal);
+        }
+
+
         public async Task<ListsItemsJoinSet> GetAsync(int listItemId)
         {
             return await this.context.ListsItems
@@ -76,6 +114,12 @@ namespace Labratory.Infrastructure.Repositories
             this.context.Entry<ListsItems>(listsItem).State = EntityState.Modified;
             await this.context.SaveChangesAsync();
             return listsItem;
+        }
+
+        public async Task AddRangeItems(List<ListsItems> items)
+        {
+            await this.context.AddRangeAsync(items);
+            await this.context.SaveChangesAsync();
         }
     }
 }

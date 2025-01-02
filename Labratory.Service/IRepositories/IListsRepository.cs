@@ -16,6 +16,8 @@
         Task<Lists> InsertList(Lists list);
         Task<Lists> UpdateList(Lists list);
         Task<bool> DeleteList(int id);
-        
+
+        Task<(IList<Lists>, int)> GetFilteredLists(FilterEnvelop<FilterSearch> filter);
+
     }
 }

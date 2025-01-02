@@ -24,6 +24,21 @@ namespace Labratory.Service.Lists
             this.mapper = mapper;
         }
 
+        public async Task<FilterEnvelop<IList<ListsDto>>> GetFilteredLists(FilterEnvelop<FilterSearch> filter)
+        {
+            var result = new FilterEnvelop<IList<ListsDto>>();
+            var data = await this.listsRepository.GetFilteredLists(filter);
+            var mappedData = mapper.Map<List<ListsDto>>(data.Item1);
+
+            result.Data = mappedData;
+            result.TotalRecords = data.Item2;
+            decimal pages = (decimal)result.TotalRecords / (decimal)filter.PageSize;
+            result.Pages = (int)Math.Ceiling(pages);
+            result.CurrentPage = filter.CurrentPage;
+
+            return result;
+        }
+
         public async Task<ListsDto> CreateList(ListsDto list)
         {
             var entity = this.mapper.Map<Domain.Entities.Lists>( list );
