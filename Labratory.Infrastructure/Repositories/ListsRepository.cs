@@ -33,11 +33,11 @@ namespace Labratory.Infrastructure.Repositories
             var result = new FilterEnvelop<IList<Lists>>();
             var baseQuery = this.context.Lists.AsQueryable();
 
-            if (filter.Data.Field.ToLower() == "nombre")
+            if (filter.Data?.Field.ToLower() == "nombre")
             {
                 baseQuery = baseQuery.Where(b => b.Name.ToLower().Contains(filter.Data.Value.ToLower()));
             }
-            if (filter.Data.Field.ToLower() == "id")
+            if (filter.Data?.Field.ToLower() == "id")
             {
                 baseQuery = baseQuery.Where(b => b.Id == Convert.ToInt32(filter.Data.Value));
             }

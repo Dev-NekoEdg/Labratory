@@ -72,7 +72,7 @@ namespace Laboratory.API.Controllers
 
             return Ok(list);
         }
-
+ 
         [HttpPost("{listId}/update-image/{listItemId}")]
         public async Task<IActionResult> LoadImageForItem(int listId, int listItemId, [FromBody] IFormFile image)
         {

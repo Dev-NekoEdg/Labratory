@@ -12,6 +12,20 @@ builder.Services.AddAutoMapper(typeof(AutoMapperConfig));
 builder.Services.AddProjectTransient();
 builder.Services.AddProjectConfiguration(builder.Configuration);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "PublicCOR",
+                      builder =>
+                      {
+                          // sin esta línea da problemas cunado se insertan datos.
+                          builder.WithHeaders("*");
+                          // Valida desde donde va a permitir ser cosumido el servicio.
+                          builder.WithOrigins("*");
+                          // Permite que se ejecuten todos los métodos Http.
+                          builder.WithMethods("*");
+                      });
+});
+
 
 builder.Services.AddDbContext<LaboratoryContext>(opt =>
 {
@@ -36,5 +50,5 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-
+app.UseCors("PublicCOR");
 app.Run();
