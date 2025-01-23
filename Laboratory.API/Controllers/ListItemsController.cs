@@ -74,7 +74,7 @@ namespace Laboratory.API.Controllers
         }
  
         [HttpPost("{listId}/update-image/{listItemId}")]
-        public async Task<IActionResult> LoadImageForItem(int listId, int listItemId, [FromBody] IFormFile image)
+        public async Task<IActionResult> LoadImageForItem(int listId, int listItemId, IFormFile image)
         {
             try
             {
@@ -87,6 +87,7 @@ namespace Laboratory.API.Controllers
                 var result = await this.service.UpdateListsItemImageAsync(listId, listItemId, extention, image.OpenReadStream());
                 // var ruta = await this.blobStorageService.SaveImageIntoBlobStorage(image.FileName, name, image.OpenReadStream());
 
+                // TODO: not return a bool but a string, the file url in the blob storage.
                 return Ok(result);
             }
             catch (NotFoundException ex)
