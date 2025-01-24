@@ -19,7 +19,7 @@ namespace Labratory.Service.ListItems
         
         Task<bool> DeleteListsItemsAsync(ListsItemsDto newListItem);
 
-        Task<bool> UpdateListsItemImageAsync(int listId, int listItemId, string ext, Stream file);
+        Task<string> UpdateListsItemImageAsync(int listId, int listItemId, string ext, Stream file);
 
         Task<bool> LoadListsItemAsync(int listId, string extention, Stream file);
 

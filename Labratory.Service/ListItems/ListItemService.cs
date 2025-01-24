@@ -78,7 +78,7 @@ namespace Labratory.Service.ListItems
             return this.mapper.Map<ListsItemsDto>(item);
         }
 
-        public async Task<bool> UpdateListsItemImageAsync(int listId, int listItemId, string ext, Stream file)
+        public async Task<string> UpdateListsItemImageAsync(int listId, int listItemId, string ext, Stream file)
         {
             var name = $"List-{listId}/{listItemId}";
 
@@ -93,7 +93,7 @@ namespace Labratory.Service.ListItems
             item.ImageUrl = result;
 
             await this.UpdateListsItemsAsync(item);
-            return true;
+            return item.ImageUrl;
         }
 
         public async Task<bool> LoadListsItemAsync(int listId, string ex, Stream file)
