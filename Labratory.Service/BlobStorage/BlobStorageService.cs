@@ -38,5 +38,14 @@ namespace Labratory.Service.BlobStorage
             return blobClient.Uri.AbsoluteUri;
         }
 
+        public async Task DeleteImageIntoBlobStorage(string completeName)
+        {
+            var service = new BlobContainerClient(this.config.Url, this.config.ContainerName);
+            BlobClient blobClient = service.GetBlobClient(completeName);
+
+            // var result = await blobClient.UploadAsync(stream, new BlobHttpHeaders { ContentType = (mimeType.Value ?? mimeTypeDefault.Value) });
+            var result = await blobClient.DeleteIfExistsAsync();
+        }
+
     }
 }

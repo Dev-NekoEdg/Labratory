@@ -57,7 +57,7 @@ namespace Labratory.Service.ListItems
         {
             var result = new FilterEnvelop<IList<ListsItemsDto>>();
             (IList<ListsItemsJoinSet>, int) items = await this.repository.GetFilteredAsync(listId, filter);
-            
+
             var data = this.mapper.Map<IList<ListsItemsDto>>(items.Item1);
 
             result.CurrentPage = filter.CurrentPage;
@@ -65,7 +65,7 @@ namespace Labratory.Service.ListItems
             result.TotalRecords = items.Item2;
             decimal pages = (decimal)result.TotalRecords / (decimal)result.PageSize;
             result.Pages = (int)Math.Ceiling(pages);
-            
+
             result.Data = data;
             return result;
         }
@@ -80,19 +80,28 @@ namespace Labratory.Service.ListItems
 
         public async Task<string> UpdateListsItemImageAsync(int listId, int listItemId, string ext, Stream file)
         {
-            var name = $"List-{listId}/{listItemId}";
+            var newName = Guid.NewGuid().ToString();
+            var fullName = $"List-{listId}/{newName}";
 
             var item = await this.GetListsItemsAsync(listId, listItemId);
             if (item == null)
             {
                 throw new NotFoundException($"List item {listItemId} was not found.");
             }
+            string oldName = item.ImageUrl;
 
-            var result = await this.blobStorageService.SaveImageIntoBlobStorage(ext, name, file);
+            var result = await this.blobStorageService.SaveImageIntoBlobStorage(ext, fullName, file);
 
             item.ImageUrl = result;
 
             await this.UpdateListsItemsAsync(item);
+
+            if (!string.IsNullOrEmpty(oldName))
+            {
+            // TODO: Validar por que no borra el archivo viejo.
+                await this.blobStorageService.DeleteImageIntoBlobStorage(oldName);
+            }
+
             return item.ImageUrl;
         }
 

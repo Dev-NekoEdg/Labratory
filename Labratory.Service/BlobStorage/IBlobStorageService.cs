@@ -10,5 +10,6 @@ namespace Labratory.Service.BlobStorage
     {
         Task<string> SaveImageIntoBlobStorage(string extention, string newName, Stream stream);
 
+        Task DeleteImageIntoBlobStorage(string completeName);
     }
 }
