@@ -30,11 +30,12 @@ namespace Labratory.Service.Lists
             var data = await this.listsRepository.GetFilteredLists(filter);
             var mappedData = mapper.Map<List<ListsDto>>(data.Item1);
 
-            result.Data = mappedData;
+            result.CurrentPage = filter.CurrentPage;
+            result.PageSize = filter.PageSize;
             result.TotalRecords = data.Item2;
             decimal pages = (decimal)result.TotalRecords / (decimal)filter.PageSize;
             result.Pages = (int)Math.Ceiling(pages);
-            result.CurrentPage = filter.CurrentPage;
+            result.Data = mappedData;
 
             return result;
         }

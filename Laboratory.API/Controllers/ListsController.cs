@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace Laboratory.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class ListsController : ControllerBase
     {
@@ -90,7 +90,7 @@ namespace Laboratory.API.Controllers
             }
         }
 
-        [HttpPost("filtered")]
+        [HttpPost("filter")]
         public async Task<IActionResult> Index([FromBody] FilterEnvelop<FilterSearch> filter)
         {
             try
