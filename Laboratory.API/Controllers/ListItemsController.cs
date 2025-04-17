@@ -87,7 +87,8 @@ namespace Laboratory.API.Controllers
                 var result = await this.service.UpdateListsItemImageAsync(listId, listItemId, extention, image.OpenReadStream());
                 // var ruta = await this.blobStorageService.SaveImageIntoBlobStorage(image.FileName, name, image.OpenReadStream());
 
-                return Ok(result);
+                var dtoResult = new DefaultDto<string>(result);
+                return Ok(dtoResult);
             }
             catch (NotFoundException ex)
             {
@@ -112,8 +113,9 @@ namespace Laboratory.API.Controllers
 
                 var result = await this.service.LoadListsItemAsync(listId, extention, fileCSV.OpenReadStream());
                 // var ruta = await this.blobStorageService.SaveImageIntoBlobStorage(image.FileName, name, image.OpenReadStream());
-
-                return Ok(result);
+                
+                var dtoResult = new DefaultDto<bool>(result);
+                return Ok(dtoResult);
             }
             catch (NotFoundException ex)
             {
@@ -139,8 +141,6 @@ namespace Laboratory.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
-
 
     }
 }

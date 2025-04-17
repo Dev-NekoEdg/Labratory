@@ -99,7 +99,7 @@ namespace Labratory.Service.ListItems
             if (!string.IsNullOrEmpty(oldName))
             {
             // TODO: Validar por que no borra el archivo viejo.
-                await this.blobStorageService.DeleteImageIntoBlobStorage(oldName);
+                this.blobStorageService.DeleteImageIntoBlobStorage(oldName);
             }
 
             return item.ImageUrl;

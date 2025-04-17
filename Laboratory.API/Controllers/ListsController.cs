@@ -82,7 +82,9 @@ namespace Laboratory.API.Controllers
             try
             {
                 var result = await this.service.DeleteList(id);
-                return Ok(result);
+                
+                var response = new DefaultDto<bool>(result);
+                return Ok(response);
             }
             catch (Exception ex)
             {
